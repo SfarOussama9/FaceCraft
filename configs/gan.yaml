@@ -1,0 +1,34 @@
+# Text-conditional GAN baseline (CBN generator, spectral-norm projection discriminator, hinge loss).
+data_config: configs/data.yaml
+tokenizer: clip
+
+z_dim: 128
+ch: 64
+text_dim: 256            # from-scratch Transformer text encoder (smaller than the diffusion one)
+text_layers: 4
+text_heads: 4
+
+steps: 20000
+batch_size: 128
+lr: 2.0e-4               # Adam, betas (0.0, 0.9), same lr for G and D
+ema_decay: 0.999
+amp: false               # GANs are fragile in fp16; keep fp32
+num_workers: 4
+
+ckpt_every: 2000
+sample_every: 2000
+fid_samples: 5000        # preliminary FID for Deliverable 2 (final evaluation will use 10k)
+
+# Fixed prompts for the sample grids (avoid the held-out pairs in configs/data.yaml)
+sample_prompts:
+  - a smiling young woman with blond hair
+  - a young man with black hair and glasses
+  - an older man with gray hair and a beard
+  - a woman with wavy brown hair wearing lipstick
+  - a young man with a goatee and a mustache
+  - a smiling woman with bangs and earrings
+  - a bald older man
+  - a young woman with straight black hair and heavy makeup
+
+out_dir: outputs/gan
+seed: 0

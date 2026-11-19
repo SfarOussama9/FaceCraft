@@ -61,6 +61,32 @@ def fake_celeba_images(fake_celeba) -> str:
 
 
 @pytest.fixture
+def tiny_gan_cfg(tmp_path_factory) -> dict:
+    """A complete, tiny GAN config on fake data (offline tokenizer, CPU-sized model, no FID)."""
+    import yaml
+    from data.celeba import load_celeba_metadata
+    from data.preprocess import build_cache
+
+    root = tmp_path_factory.mktemp("tinydata")
+    celeba = write_fake_celeba(root / "celeba", n_images=12)
+    f2t_dir = root / "face2text"
+    f2t_dir.mkdir()
+    (f2t_dir / "clean_train_2.1.json").write_text(
+        json.dumps([{"response_id": 1, "filename": "000001.jpg", "description": "A smiling man."}]))
+    ids = list(load_celeba_metadata(str(celeba)).index)
+    cache = root / "cache" / "c.npy"
+    build_cache(str(celeba / "img_align_celeba" / "img_align_celeba"), ids, str(cache), workers=1)
+    data_cfg = {"celeba_root": str(celeba), "face2text_dir": str(f2t_dir), "dialog_labels": None,
+                "cache_path": str(cache), "f2t_prob": 0.5, "dialog_prob": 0.3, "heldout_pairs": [], "seed": 0}
+    data_yaml = root / "data.yaml"
+    data_yaml.write_text(yaml.safe_dump(data_cfg))
+    return {"data_config": str(data_yaml), "tokenizer": "hash", "z_dim": 8, "ch": 8, "text_dim": 16,
+            "text_layers": 1, "text_heads": 2, "batch_size": 2, "num_workers": 0, "lr": 2e-4,
+            "ema_decay": 0.999, "steps": 4, "ckpt_every": 2, "sample_every": 2, "fid_samples": 0,
+            "sample_prompts": ["a smiling woman", "a man with glasses"], "amp": False, "seed": 0}
+
+
+@pytest.fixture
 def fake_f2t(tmp_path) -> list:
     """Two Face2Text-style JSON files (same schema as clean_*_2.1.json)."""
     a = [{"response_id": 1, "filename": "000001.jpg", "description": " A man with short hair. "},
