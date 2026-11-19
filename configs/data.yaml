@@ -12,7 +12,12 @@ crop: 140
 f2t_prob: 0.5      # images WITH a human (Face2Text) caption use it this often
 dialog_prob: 0.3   # otherwise, use a degree-aware Dialog caption this often (else a template caption)
 
-# Attribute pairs removed from every generator's TRAIN split (compositional test). Filled by the D2 notebook.
-heldout_pairs: []
+# Attribute pairs removed from every generator's TRAIN split (compositional test).
+# Chosen by data.splits.choose_heldout_pairs(seed=0) on real CelebA (see the D2 notebook):
+#   train/test images with both: 2945/280, 1806/250, 2788/442 -> 7,461 train images removed (4.6%)
+heldout_pairs:
+  - [Sideburns, Smiling]
+  - [High_Cheekbones, Pale_Skin]
+  - [Blond_Hair, Narrow_Eyes]
 
 seed: 0
