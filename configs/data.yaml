@@ -1,0 +1,18 @@
+# Data paths and preprocessing settings (shared by every experiment).
+# Local paths below are for Oussama's laptop; on Kaggle use configs/data_kaggle.yaml instead.
+celeba_root: C:/Users/oussa/datasets/facecraft/celeba
+face2text_dir: C:/Users/oussa/datasets/facecraft/face2text
+dialog_labels: C:/Users/oussa/datasets/facecraft/dialog/combined_annotation.txt   # null if not available
+cache_path: C:/Users/oussa/datasets/facecraft/cache/celeba64.npy
+
+image_size: 64
+crop: 140
+
+# Caption sampling (see data/dataset.py)
+f2t_prob: 0.5      # images WITH a human (Face2Text) caption use it this often
+dialog_prob: 0.3   # otherwise, use a degree-aware Dialog caption this often (else a template caption)
+
+# Attribute pairs removed from every generator's TRAIN split (compositional test). Filled by the D2 notebook.
+heldout_pairs: []
+
+seed: 0
