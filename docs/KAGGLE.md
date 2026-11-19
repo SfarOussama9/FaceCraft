@@ -34,3 +34,5 @@ so every training script saves `last.pt` regularly and **resumes automatically**
 ## The Deliverable 2 notebook
 Put the downloaded `outputs/` folder next to the repo, open `notebooks/01_data_and_preprocessing.ipynb`
 and run all cells (`RUN_TRAINING = False` loads the saved results instead of retraining).
+On Kaggle the notebook picks `configs/data_kaggle.yaml` automatically; elsewhere it uses `configs/data.yaml`
+(override with the environment variable `FACECRAFT_DATA_CONFIG`).

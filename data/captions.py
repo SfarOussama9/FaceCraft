@@ -129,8 +129,10 @@ def template_caption(attrs: dict, rng: random.Random) -> str:
         if name == "Smiling" and smiling_adj:
             continue
         details.append(rng.choice(options))
-    if male and attrs["No_Beard"] == 0 and attrs["Goatee"] == 0:
-        details.append(rng.choice(["a beard", "a full beard"]))
+    # CelebA's No_Beard=0 mostly means "some facial hair" (CelebA-Dialog: about half are light stubble,
+    # ~2% a full beard). So: never claim a FULL beard, and if stubble is already mentioned, say nothing more.
+    if male and attrs["No_Beard"] == 0 and attrs["Goatee"] == 0 and attrs["5_o_Clock_Shadow"] == 0:
+        details.append(rng.choice(["a beard", "facial hair"]))
     worn = [rng.choice(opts) for name, opts in WEAR_PHRASES.items() if attrs[name] == 1]
 
     rng.shuffle(details)

@@ -58,7 +58,7 @@ import matplotlib.pyplot as plt
 import torch
 from PIL import Image
 
-from utils.config import load_config
+from utils.config import default_data_config, load_config
 from utils.seed import set_seed
 
 RUN_TRAINING = False                     # True = run the training scripts from this notebook (hours)
@@ -89,7 +89,7 @@ if FAKE:   # tiny synthetic dataset with the real file formats (used to smoke-te
     DATA_CFG = str(tmp / "data.yaml")
     Path(DATA_CFG).write_text(yaml.safe_dump(cfg_fake))
 else:
-    DATA_CFG = os.environ.get("FACECRAFT_DATA_CONFIG", "configs/data.yaml")
+    DATA_CFG = default_data_config()        # configs/data_kaggle.yaml automatically on Kaggle
 
 cfg = load_config(DATA_CFG)
 print("data config:", DATA_CFG, "| GPU:", torch.cuda.get_device_name(0) if torch.cuda.is_available() else "none")

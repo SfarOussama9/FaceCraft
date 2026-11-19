@@ -55,6 +55,20 @@ def test_mentions_requested_attribute():
         assert any(w in s for w in ["glasses", "spectacles"])
 
 
+def test_stubble_is_not_called_a_beard():
+    # Review finding: CelebA No_Beard=0 mostly means stubble (Dialog: 49% level 1, 2.4% full beard)
+    a = zeros(Male=1, No_Beard=0, **{"5_o_Clock_Shadow": 1})
+    for k in range(50):
+        s = template_caption(a, random.Random(k)).lower()
+        assert "beard" not in s
+
+
+def test_never_claims_a_full_beard():
+    a = zeros(Male=1, No_Beard=0)
+    for k in range(50):
+        assert "full beard" not in template_caption(a, random.Random(k)).lower()
+
+
 def test_captions_vary():
     a = zeros(Male=1, Smiling=1, Eyeglasses=1, Black_Hair=1)
     assert len({template_caption(a, random.Random(i)) for i in range(30)}) >= 10
