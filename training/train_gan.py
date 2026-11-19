@@ -102,24 +102,24 @@ def run_gan(cfg: dict) -> int:
 
     batches, t0 = _infinite(loader), time.time()
     while step < cfg["steps"]:
-        images, token_ids, _, _ = next(batches)
-        images, token_ids = images.to(device, non_blocking=True), token_ids.to(device, non_blocking=True)
-        cond = text(token_ids)[1]
-
-        # --- D step: text features are detached, so only G's loss trains the text encoder ---
-        c = cond.detach()
-        z = torch.randn(len(images), cfg["z_dim"], device=device)
-        with torch.no_grad():
-            fake = G(z, c)
-        d_real = D(images, c)
-        d_fake = D(fake, c)
-        d_wrong = D(images, c.roll(1, dims=0))            # real image, caption of another image
-        loss_D = torch.relu(1 - d_real).mean() + 0.5 * (torch.relu(1 + d_fake).mean() + torch.relu(1 + d_wrong).mean())
-        opt["D"].zero_grad(set_to_none=True)
-        loss_D.backward()
-        opt["D"].step()
+        # --- n_dis D steps per G step (SN-GAN recipe, Miyato et al. 2018). With only 1, G caught up
+        #     with D within a few steps and D went blind to the images (see tests/test_gan.py). ---
+        for _ in range(cfg.get("n_dis", 5)):
+            images, token_ids, _, _ = next(batches)
+            images, token_ids = images.to(device, non_blocking=True), token_ids.to(device, non_blocking=True)
+            with torch.no_grad():                         # text vectors are inputs for D, not trained by D
+                c = text(token_ids)[1]
+                fake = G(torch.randn(len(images), cfg["z_dim"], device=device), c)
+            d_real = D(images, c)
+            d_fake = D(fake, c)
+            d_wrong = D(images, c.roll(1, dims=0))        # real image, caption of another image
+            loss_D = torch.relu(1 - d_real).mean() + 0.5 * (torch.relu(1 + d_fake).mean() + torch.relu(1 + d_wrong).mean())
+            opt["D"].zero_grad(set_to_none=True)
+            loss_D.backward()
+            opt["D"].step()
 
         # --- G step (also updates the text encoder through `cond`) ---
+        cond = text(token_ids)[1]
         z = torch.randn(len(images), cfg["z_dim"], device=device)
         loss_G = -D(G(z, cond), cond).mean()
         opt["G"].zero_grad(set_to_none=True)

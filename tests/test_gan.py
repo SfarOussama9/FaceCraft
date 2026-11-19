@@ -53,6 +53,22 @@ def test_gan_resumes_from_checkpoint(tmp_path, tiny_gan_cfg):
     assert (tmp_path / "last.pt").exists() and (tmp_path / "metrics.json").exists()
 
 
+def test_gan_does_n_dis_discriminator_steps_per_generator_step(tmp_path, tiny_gan_cfg):
+    # Regression: with Adam(beta1=0) and 1 D step per G step the discriminator collapsed (went blind to the
+    # image) within ~50 steps. The SN-GAN recipe (Miyato et al. 2018) uses n_dis = 5.
+    from training.train_gan import run_gan
+    run_gan(dict(tiny_gan_cfg, out_dir=str(tmp_path), steps=2, n_dis=3, ckpt_every=100))
+    state = torch.load(tmp_path / "last.pt", map_location="cpu", weights_only=False)["optimizer"]
+    d_steps = next(iter(state["D"]["state"].values()))["step"]
+    g_steps = next(iter(state["G"]["state"].values()))["step"]
+    assert float(g_steps) == 2 and float(d_steps) == 6
+
+
+def test_gan_config_uses_reference_n_dis():
+    from utils.config import load_config
+    assert load_config("configs/gan.yaml")["n_dis"] == 5
+
+
 @pytest.mark.network
 def test_fid_identical_sets_near_zero():
     from evaluation.fid_kid import compute_fid_kid

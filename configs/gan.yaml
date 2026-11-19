@@ -8,15 +8,16 @@ text_dim: 256            # from-scratch Transformer text encoder (smaller than t
 text_layers: 4
 text_heads: 4
 
-steps: 20000
+steps: 10000             # generator steps (each with n_dis discriminator steps)
+n_dis: 5                 # D steps per G step (SN-GAN recipe; 1 made D collapse)
 batch_size: 128
 lr: 2.0e-4               # Adam, betas (0.0, 0.9), same lr for G and D
 ema_decay: 0.999
 amp: false               # GANs are fragile in fp16; keep fp32
 num_workers: 4
 
-ckpt_every: 2000
-sample_every: 2000
+ckpt_every: 1000
+sample_every: 1000
 fid_samples: 5000        # preliminary FID for Deliverable 2 (final evaluation will use 10k)
 
 # Fixed prompts for the sample grids (avoid the held-out pairs in configs/data.yaml)
