@@ -1,0 +1,15 @@
+# Data paths on Kaggle (see docs/KAGGLE.md). Everything else is identical to configs/data.yaml.
+celeba_root: /kaggle/input/celeba-dataset
+face2text_dir: /kaggle/working/datasets/face2text
+dialog_labels: /kaggle/input/facecraft-dialog/combined_annotation.txt   # private dataset you upload; null if absent
+cache_path: /kaggle/working/cache/celeba64.npy
+
+image_size: 64
+crop: 140
+f2t_prob: 0.5
+dialog_prob: 0.3
+heldout_pairs:
+  - [Sideburns, Smiling]
+  - [High_Cheekbones, Pale_Skin]
+  - [Blond_Hair, Narrow_Eyes]
+seed: 0
