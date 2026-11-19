@@ -1,0 +1,27 @@
+# Core
+torch>=2.2
+torchvision>=0.17
+numpy
+pandas
+pillow
+pyyaml
+tqdm
+matplotlib
+
+# Text (CLIP BPE tokenizer + CLIP text encoder for the ablation only)
+transformers
+
+# Evaluation (FID / KID)
+torchmetrics[image]
+scipy
+scikit-learn
+
+# Tracking and demo
+wandb
+gradio
+
+# Notebooks
+jupyter
+ipykernel
+
+# NOTE: pin exact versions (pip freeze) once the Kaggle environment is confirmed.

@@ -1,0 +1,40 @@
+# Data and model artifacts (never commit)
+datasets/
+raw/
+cache/
+*.npy
+*.npz
+*.zip
+*.tar.gz
+*.jpg
+*.png
+!docs/**/*.png
+checkpoints/
+*.pt
+*.pth
+*.ckpt
+outputs/
+samples/
+wandb/
+runs/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+*.egg-info/
+
+# Notebooks
+.ipynb_checkpoints/
+
+# OS / editors
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+
+# Agent workspace
+.superpowers/
