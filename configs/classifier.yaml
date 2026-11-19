@@ -1,0 +1,14 @@
+# Attribute classifier ("the judge") trained from scratch on real CelebA 64x64.
+data_config: configs/data.yaml
+tokenizer: hash          # captions are not used by the classifier; the cheap offline tokenizer is enough
+
+width: 64
+epochs: 6
+batch_size: 256
+lr: 1.0e-3
+weight_decay: 1.0e-4     # AdamW
+amp: true
+num_workers: 4
+ckpt_every: 2000
+out_dir: outputs/classifier
+seed: 0
