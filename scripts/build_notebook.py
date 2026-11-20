@@ -191,7 +191,7 @@ im = ax.imshow(corr, cmap="RdBu_r", vmin=-1, vmax=1)
 ax.set_xticks(range(len(CAPTION_ATTRS))); ax.set_xticklabels(CAPTION_ATTRS, rotation=90, fontsize=7)
 ax.set_yticks(range(len(CAPTION_ATTRS))); ax.set_yticklabels(CAPTION_ATTRS, fontsize=7)
 plt.colorbar(im, fraction=0.04); ax.set_title("Correlation between caption attributes"); plt.tight_layout(); plt.show()
-pairs = corr.where(np.triu(np.ones(corr.shape, bool), 1)).stack().sort_values()
+pairs = corr.where(np.triu(np.ones(corr.shape, bool), 1)).stack().dropna().sort_values()
 print("strongest positive:", pairs.tail(4).round(2).to_dict())
 print("strongest negative:", pairs.head(4).round(2).to_dict())
 """)
@@ -262,14 +262,19 @@ pos = {i: k for k, i in enumerate(cache_ids)}
 rng = random.Random(3)
 with_f2t = [i for i in meta.index if i in f2t]
 show = (with_f2t[:3] + [i for i in meta.index[::max(1, len(meta) // 50)] if i not in f2t][:3])[:6]
-fig, axes = plt.subplots(len(show), 1, figsize=(12, 2.0 * len(show)))
-for ax, i in zip(np.atleast_1d(axes), show):
+import textwrap
+fig, axes = plt.subplots(len(show), 2, figsize=(13, 1.9 * len(show)), gridspec_kw={"width_ratios": [1, 7]})
+for (ax_img, ax_txt), i in zip(axes, show):
     t = template_caption(meta.loc[i, ATTR_NAMES].to_dict(), rng)
-    d = dialog_caption(dialog.loc[i].to_dict(), meta.loc[i, "Male"] == 1, rng) if dialog is not None and i in dialog.index else "—"
-    h = f2t[i][0] if i in f2t else "—"
-    ax.imshow(np.array(cache[pos[i]])); ax.set_xticks([]); ax.set_yticks([])
-    ax.text(70, 10, f"TEMPLATE: {t}\\nDIALOG:   {d}\\nHUMAN:    {h[:140]}", fontsize=8, va="top", family="monospace")
-    ax.set_xlim(0, 700); ax.set_title(i, loc="left", fontsize=8)
+    d = dialog_caption(dialog.loc[i].to_dict(), meta.loc[i, "Male"] == 1, rng) if dialog is not None and i in dialog.index else "-"
+    h = f2t[i][0] if i in f2t else "- (no human description for this image)"
+    ax_img.imshow(np.array(cache[pos[i]])); ax_img.axis("off"); ax_img.set_title(i, fontsize=8)
+    lines = []
+    for label, text in [("TEMPLATE", t), ("DIALOG", d), ("HUMAN", h)]:
+        wrapped = textwrap.wrap(text, 105) or ["-"]
+        lines.append(f"{label:9s}{wrapped[0]}")
+        lines += [" " * 9 + w for w in wrapped[1:]]
+    ax_txt.text(0, 0.5, "\\n".join(lines), fontsize=8, va="center", family="monospace"); ax_txt.axis("off")
 plt.tight_layout(); plt.show()
 """)
 
