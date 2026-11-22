@@ -1,27 +1,30 @@
-# Core
-torch>=2.2
-torchvision>=0.17
-numpy
-pandas
-pillow
-pyyaml
-tqdm
-matplotlib
+# Tested with Python 3.11 on Windows 11 + RTX 4070 (CUDA 12.4).
+# GPU install of PyTorch (pick the CUDA build matching your driver, see https://pytorch.org):
+#   pip install torch==2.6.0 torchvision==0.21.0 --index-url https://download.pytorch.org/whl/cu124
+# then:
+#   pip install -r requirements.txt
+torch==2.6.0
+torchvision==0.21.0
+numpy==2.4.6
+pandas==3.1.1
+pillow==13.0.0
+PyYAML==6.0.3
+tqdm==4.70.1
+matplotlib==3.11.2
+scipy==1.17.1
+scikit-learn==1.9.1
 
-# Text (CLIP BPE tokenizer + CLIP text encoder for the ablation only)
-transformers
+# Text: CLIP BPE tokenizer (vocabulary only) + CLIP text encoder for one ablation
+transformers==5.23.0
 
-# Evaluation (FID / KID)
-torchmetrics[image]
-scipy
-scikit-learn
+# Evaluation: FID / KID (InceptionV3 features)
+torchmetrics[image]==1.9.0
+torch-fidelity==0.4.0
 
-# Tracking and demo
-wandb
-gradio
-
-# Notebooks
-jupyter
-ipykernel
-
-# NOTE: pin exact versions (pip freeze) once the Kaggle environment is confirmed.
+# Data download, notebooks, tests
+gdown==6.5.2
+jupyter==1.1.1
+ipykernel==7.4.0
+nbformat==5.11.1
+nbconvert==7.17.2
+pytest==9.2.0
